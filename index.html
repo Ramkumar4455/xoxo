@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html>
+
+        <head>
+            <title>XO XO</title>
+            <style>
+
+                .cellContainer{
+                    display: grid;
+                    grid-template-columns: repeat(3,auto);
+                    width: 500px;
+                    margin: auto;  
+                    margin-bottom: 30px;
+                }
+
+                .cells{
+                    display: flex;
+                    width: 166px;
+                    height: 166px;
+                    border: 2px solid;
+                    box-shadow: 0 0 0 2px;
+                    line-height: 75px;
+                    font-size: 50px;
+                    cursor: pointer;
+                    justify-content: center;
+                    align-items: center;
+                    font-size: 93px;
+                  
+                }
+
+                .container{
+                    font-family: "Permanent Marker",cursive;
+                    text-align: center;
+                }
+
+                .turn{
+                    font-size: 26px;
+                    font-weight: bold;
+                }
+
+                .reset{
+                    background:none;
+                    position: relative;
+                  margin-top: 15px;
+                    padding: 7px 15px;
+                    border: none;
+                    font-size: 20px;
+                    font-family: "Permanent Marker",cursive;
+                    font-weight: bold;
+                    background-color: white;
+                    cursor: pointer;
+                    transition: 0.8s;
+                    overflow: hidden;
+                    z-index: 100;
+                    color: black;
+                    border-radius: 10px;
+                }
+
+                .reset::before{
+                    content: "";
+                    position: absolute;
+                    bottom: 0;
+                    height: 10%;
+                    left: 0;
+                    background-color: black;
+                    width: 100%;
+                   z-index: -1;
+                   transition: 0.5s;
+                    border-radius:50% 50% 0 0 ;
+                }
+                .reset:hover{
+                    color: white;
+                }
+                .reset:hover::before{
+                    height: 180%;
+                    
+                   
+                }
+            </style>
+
+        </head>
+
+        <body>
+           
+     
+            <div class="container">
+
+                <h1>Tic Tac Toe</h1>
+
+                <div class="cellContainer">
+
+                    <div cellIndex="0" class="cells cell-0">  </div>
+                    <div cellIndex="1" class="cells  cell-1"> </div>
+                    <div cellIndex="2" class="cells  cell-2"> </div>
+                    <div cellIndex="3" class="cells  cell-3"> </div>
+                    <div cellIndex="4" class="cells  cell-4"> </div>
+                    <div cellIndex="5" class="cells  cell-5"> </div>
+                    <div cellIndex="6" class="cells  cell-6"> </div>
+                    <div cellIndex="7" class="cells  cell-7"> </div>
+                    <div cellIndex="8" class="cells  cell-8"> </div>
+                   
+
+                </div>
+
+                <div class="turn"> X's Turn</div>
+
+                <button class="reset">Reset</button>
+
+                
+
+
+            </div>
+
+
+            
+
+
+
+            <script>
+
+               
+                const winConditions=[
+                    [0,1,2],
+                    [3,4,5],
+                    [6,7,8],
+                    [0,3,6],
+                    [1,4,7],
+                    [2,5,8],
+                    [0,4,8],
+                    [2,4,6]
+                ]
+
+
+                let filledArray=["","","","","","","","",""]
+
+                let currChar='X';
+
+                let running=true;
+                
+                let cell=document.querySelectorAll('.cells');
+
+                let turn=document.querySelector('.turn')
+
+                cell.forEach((c)=>{
+                    
+                    c.addEventListener('click',()=>{
+                        if(running){
+                        if(filledArray[c.getAttribute("cellIndex")]==""){
+                        if(currChar=='X'){
+                            c.innerHTML='X';
+                            
+                            filledArray[c.getAttribute("cellIndex")]=currChar;
+                            
+                           checkForWinner();
+                          
+                            if(running){
+                            turn.innerHTML=`${currChar}'s Turn`
+                            currChar='O';
+                            console.log(filledArray)
+                            }
+
+                           if(running){
+                            setTimeout(computerMove,1000)
+                           }
+                        }
+                       
+                    }
+                  
+                }
+               
+                    
+        })
+
+
+    })
+
+        function computerMove(){
+          
+            let randoms=Math.floor(Math.random()*9);
+            while(filledArray[randoms]!=""){
+                randoms=Math.floor(Math.random()*9)
+            }
+
+            filledArray[randoms]=currChar;
+            document.querySelector(`.cell-${randoms}`).innerHTML=currChar
+           
+            checkForWinner();
+            if(running){
+            currChar='X'
+            turn.innerHTML=`${currChar}'s Turn`
+            console.log(filledArray)
+            }
+         
+        }
+                   
+              
+                  
+                
+
+                function checkForWinner(){
+                    let roundWon=false;
+
+                    for(let i=0;i<winConditions.length;i++){
+                        const condition=winConditions[i];
+                        const cellA=  filledArray[condition[0]]
+                        const cellB=  filledArray[condition[1]]
+                        const cellC=  filledArray[condition[2]]
+
+                        if(cellA=="" || cellB=="" || cellC==""){
+                            continue;
+                        }
+                        if(cellA==cellB && cellB==cellC){
+                            roundWon=true;
+                            break;
+                        }
+                    }
+                    if(roundWon){
+                        turn.textContent=`${currChar} wins`
+                        running=false
+                    }
+                    else if(!filledArray.includes("")){
+                    
+                        running=false;
+                    }
+                    return running
+                    
+                }
+
+
+                let reset=document.querySelector('.reset');
+
+                reset.addEventListener('click',()=>{
+                    cell.forEach((c)=>{
+                        c.innerHTML='';
+                        filledArray=["","","","","","","","",""]
+                        console.log(filledArray)
+                        running=true;
+                        currChar='X'
+                        turn.innerHTML="X's Turn"
+                    })
+                })
+
+
+
+//                 document.querySelectorAll('.js-delete-link').forEach((link)=>{
+//             link.addEventListener('click',()=>{
+//              const productId=   link.dataset.productId;
+//              removeFromCart(productId);
+//              console.log(cart)
+
+//             const container= document.querySelector(`.js-cart-item-container-${productId}`)
+//            container.remove();
+//             })
+// })
+                  
+
+                
+
+            </script>
+
+        </body>
+
+</html>
